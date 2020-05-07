@@ -1,0 +1,166 @@
+{%extends "main.html"%} {%block content%}
+
+<div class="container-fluid p-0 m-0">
+    <div class="row col-12 p-0 m-0">
+        <div class="col-12 white bg_facebook text-center p-2">
+            If you already have an account, please sign in otherwise please sign up to make new account<br /> This account will help you if you want to fill in the survey later
+        </div>
+        <div class="col-md-6 login_block bg_white p-0">
+            <h2 class="gray bg_gray col-12 mb-5 p-5 text-center p-0">I have an account</h2>
+            <form class="col-md-6 offset-md-3" action="{{request.path}}?next={{next}}" enctype="application/x-www-form-urlencoded" method="post">
+
+                {%if login_form.non_field_errors%}
+                <div class="alert alert-danger" role="alert">
+                    {{ login_form.non_field_errors }}</div>
+                {%endif%} {% if next %}
+                <input type="hidden" name="next" value="{{ next }}" /> {% endif %}
+                <input type="text" placeholder="Your Email" name="username" class="form-control br_gray gray text-center text-md-left" value="{%if login_form.username.value%}{{ login_form.username.value }}{%endif%}"> {%if login_form.username.errors%}
+                <div class="alert alert-danger" role="alert">
+                    {{login_form.username.errors }}
+                </div>
+                {%endif%}
+
+                <input type="password" placeholder="Your Password" value="{%if login_form.password.value%}{{ login_form.password.value }}{%endif%}" name="password" class="form-control mt-3 br_gray gray text-center text-md-left"> {%if login_form.password.errors%}
+                <div class="alert alert-danger" role="alert">
+                    {{login_form.password.errors }}
+                </div>
+                {%endif%}
+
+                <input type="submit" value="Login" class="form-control mt-3 white bg_facebook b_rad_30">
+                <input type="hidden" name="formtype" value="login">
+                <!--
+                  <a class="forget_password" href="/account/forget/"
+                    class="float-left gray mt-1">Forget your
+                    password?</a>
+                -->
+                <div class="col-12 text-center">
+                    <hr class="border" />
+                    <div class="or_place_holder gray bg_white font-weight-bold"></div>
+                </div>
+
+                {% csrf_token %}
+            </form>
+            <div class="row ">
+                <div class="col-12 text-center mt-4 mb-4">
+
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 register_block  p-0">
+
+            <h2 class="gray col-12 mb-5 p-5 bg_gray text-center p-0">Sign up
+            </h2>
+
+            <div class="col-12 text-center mt-3 mb-5  m-0">
+                <div class="row signup_block ">
+                    <div class="col-md-12 bg_white ">
+                        <div class="row justify-content-center">
+
+                            <div class="col-lg-6  col-md-8   p-0 mb-5">
+                                <h2 class="gray col-12 text-center p-0"></h2>
+                                {%if not success%}
+                                <form id="signup_form" class="col-md-12 " action="{{request.path}}" enctype="application/x-www-form-urlencoded" method="post">
+
+                                    <div class="row">
+
+                                        <div class="col-md-12 col-sm-12 p-1">
+                                            <input type="email" placeholder="Email" name="email" class="form-control br_gray br_1 gray " value="{%if signup_form.email.value %}{{ signup_form.email.value }}{%endif%}"> {%if signup_form.email.errors%}
+                                            <div class="alert alert-danger" role="alert">
+                                                {{signup_form.email.errors }}
+                                            </div>
+                                            {%endif%}
+
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-12 p-1">
+                                            <input type="text" placeholder="First Name" name="first_name" class="form-control br_gray br_1 gray " value="{%if signup_form.first_name.value %}{{ signup_form.first_name.value }}{%endif%}"> {%if signup_form.first_name.errors%}
+                                            <div class="alert alert-danger" role="alert">
+                                                {{signup_form.first_name.errors }}
+                                            </div>
+                                            {%endif%}
+                                        </div>
+                                        <div class="col-md-6 col-sm-12 p-1">
+                                            <input type="text" placeholder="Last Name" name="last_name" class="form-control br_gray br_1 gray " value="{%if signup_form.last_name.value %}{{ signup_form.last_name.value }}{%endif%}"> {%if signup_form.last_name.errors%}
+                                            <div class="alert alert-danger" role="alert">
+                                                {{signup_form.last_name.errors }}
+                                            </div>
+                                            {%endif%}
+
+
+                                        </div>
+                                        <input type="hidden" name="formtype" value="signup">
+                                    </div>
+
+
+
+                                    <div class="row">
+                                        <div class="col-md-6 col-sm-12 p-1">
+                                            <input type="password" placeholder="Password" name="password1" class="form-control br_gray br_1 gray " value="{%if signup_form.password.value %}{{ signup_form.password.value }}{%endif%}"> {%if signup_form.password1.errors%}
+                                            <div class="alert alert-danger" role="alert">
+                                                {{signup_form.password1.errors }}
+                                            </div>
+                                            {%endif%}
+                                        </div>
+                                        <div class="col-md-6 col-sm-12 p-1">
+                                            <input type="password" placeholder="Re-type Password" name="password2" class="form-control br_gray br_1 gray " value="{%if signup_form.password1.value %}{{ signup_form.password1.value }}{%endif%}"> {%if signup_form.password2.errors%}
+                                            <div class="alert alert-danger" role="alert">
+                                                {{signup_form.password2.errors }}
+                                            </div>
+                                            {%endif%}
+
+                                        </div>
+
+                                    </div>
+                                    <!--  <div class="row">
+                            <div class="col">
+                                <div class="agreement float-left">
+                                    <i class="far fa-square checkbox"></i>
+                                    <i
+                                        class="far fa-check-square checkbox d-none"></i>
+                                    <input id="term_accept"
+                                        type="checkbox"
+                                        class="gray mr-4 " data-msg-alert="please Accept Terms of Use"><label
+                                        class="gray text-left term_accept_text"
+                                        for="term_accept">I Agree to participate according to<a href="#">
+                                            Terms of Participate </a> 
+                                    </label>
+                                </div>
+                            </div>
+                        </div> -->
+                                    <div class="row justify-content-center">
+                                        <div class="">
+                                            <input type="submit" value="Sign up" class="form-control mt-3 white bg_green b_rad_30 pr-4 pl-4  ">
+                                        </div>
+                                    </div>
+                                    {% csrf_token %}
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {%else%}
+    <div class="col-md-12 login_block bg_white p-0">
+        <h2 class="gray bg_gray col-12 mb-5 p-5 text-center p-0">I have an account</h2>
+        <div class="alert alert-success text-center">
+            Thanks for Registration
+            <a href="/">
+                Click here to continue
+            </a>
+        </div>
+    </div>
+    {%endif%}
+
+
+</div>
+{%endblock%}

@@ -1,0 +1,209 @@
+{%extends "main.html"%} {% load static %} {%block content%}
+
+<div class="container-fluid p-0 m-0">
+    <div class="row col-12 p-0 m-0">
+        <div class="col-md-12 diagram_block bg_white p-0">
+            <h2 class="bg_gray col-12 mb-5 p-5 text-center p-0">
+                Step 4. Showing suggestions
+            </h2>
+        </div>
+
+        <div class="col-md-12 diagram_block bg_white p-0">
+            <table class='suggestions'>
+                <tr>
+                    <td class='suggestion-for'>
+                        Your original activity
+                    </td>
+                </tr>
+            </table>
+            <div class="diagram_container suggestion">
+                <div class="back_line"></div>
+                <ul class="diagram">
+                    {%for travel in travels%}
+                    <li class="travel" data-position="{{travel.position|add:1}}">
+                        <span class="ctn">
+              <span class="purpose p-2 m-2 br_1 bg_blue mb-3 white">
+                {%if forloop.first%}
+                <!--{{travel.free_purpose}} -->
+                Home
+                {%else%}
+                {%if forloop.last and travel.free_purpose%}
+                {{travel.free_purpose}}
+                {%else%}
+                {%if travel.purpose_detail%}
+                {{travel.purpose_detail.name}}
+                {%else%}
+                {%ifequal travel.purpose.name "Go Home"%}
+                Home
+                {%else%}
+                {{travel.purpose}}
+                {%endifequal%}
+                {%endif%}
+                {%endif%}
+                {%endif%}
+              </span> {%if forloop.first%} {{travel.travel_from|truncatewords:4}} {%else%} {{travel.travel_to|truncatewords:4}} {%endif%}
+                        <br>
+                        </span>
+
+                        <span class="travel_footer">
+              {%if forloop.first%}
+              <font class='time-departure'>{{travel.departure_time|time:'h:i A'}}</font>
+              {%else%}
+              {%if forloop.last%}
+              <font class='time-arrival'>{{travel.arrival_time|time:'h:i A'}}</font>
+              {%else%}
+              <font class='time-arrival'>{{travel.arrival_time|time:'h:i A'}}</font>
+              {% for anotherTravel in travels %}
+              {% if forloop.counter == forloop.parentloop.counter|add:1 %}
+              - <font class='time-departure'>{{anotherTravel.departure_time|time:'h:i A'}}</font>
+              {%endif%}
+              {% endfor %}
+              {%endif%}
+              {%endif%}
+              <br />
+              {%ifequal travel.type "car"%}
+              <i class=" fa fa-car ml-2 "></i>
+              {%endifequal%}
+              {%ifequal travel.type "walking"%}
+              <i class=" fa fa-walking ml-2 "></i>
+              {%endifequal%}
+              {%ifequal travel.type "public"%}
+              <i class=" fa fa-bus-alt ml-2 "></i>
+              {%endifequal%}
+              {{travel.get_travel_mode_display|truncatechars:15}}
+            </span>
+                    </li>
+
+                    {%if not forloop.last%}
+                    <li class="arrow">
+                        <i class=" arrow_right fa fa-arrow-right ml-2 fa-2x"></i>
+                    </li>
+                    {%endif%} {%endfor%}
+                </ul>
+            </div>
+
+            <table class='suggestions'>
+                <tr class='suggestion-row__header'>
+                    <td class='suggestion-number'>
+                        No. <label id='suggestionNo'>1</label>
+                    </td>
+                    <td colspan='5' class='suggestion-for'>
+                        <label id='suggestion-for'></label>
+                    </td>
+                </tr>
+                <tr class='activity-row'>
+                    <td class='suggestion'></td>
+                    <td class='suggestion'>Home</td>
+                    <td class='suggestion'>Shop</td>
+                    <td class='suggestion'>Home</td>
+                    <td class='suggestion'>Work</td>
+                    <td class='suggestion'>Home</td>
+                </tr>
+
+                <tr class='calculated-time-row'>
+                    <td class='suggestion strong'>Newly-calculated time (
+                        <font class='time-arrival'>Arrival</font> |
+                        <font class='time-departure'>Departure</font>)</td>
+                    <td class='suggestion'>
+                        <font class='time-deprecated'>00:00 a.m.</font> |
+                        <font class='time-departure'>09:40 a.m.</font>
+                    </td>
+                    <td class='suggestion'>
+                        <font class='time-deprecated'>09:50 a.m.</font> |
+                        <font class='time-departure'>10:00 a.m.</font>
+                    </td>
+                    <td class='suggestion'>
+                        <font class='time-arrival'>10:10 a.m.</font> |
+                        <font class='time-departure'>10:20 a.m.</font>
+                    </td>
+                    <td class='suggestion'>
+                        <font class='time-deprecated'>10:40 a.m.</font> |
+                        <font class='time-departure'>11:00 a.m.</font>
+                    </td>
+                    <td class='suggestion'>
+                        <font class='time-arrival'>11:20 a.m.</font> |
+                        <font class='time-deprecated'>11:40 a.m.</font>
+                    </td>
+                </tr>
+                <tr class='travel-mode-row'>
+                    <td class='suggestion strong'>Travel mode</td>
+                    <td class='suggestion'><label>Walking</label></td>
+                    <td class='suggestion'><label>Car</label></td>
+                    <td class='suggestion'><label>Walking</label></td>
+                    <td class='suggestion'><label>Walking</label></td>
+                    <td class='suggestion'></td>
+                </tr>
+                <tr class='location-row'>
+                    <td class='suggestion strong'>Nearby location</td>
+                    <td class='suggestion'></td>
+                    <td class='suggestion'></td>
+                    <td class='suggestion'></td>
+                    <td class='suggestion'>Sydney Campsie Australia</td>
+                    <td class='suggestion'></td>
+                </tr>
+                <tr class='duration-row'>
+                    <td colspan='20' class='duration-info'>
+                        <ul class='calculated-info'>
+                            <li>
+                                Time taken to spend at <label id='purpose'></label>: <label class='calculated-info' id='duration'></label> min
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr class='calorie-and-gym-cost'>
+                    <td colspan='20' class='calculated-info'>
+                        <ul class='calculated-info'>
+                            <li>
+                                Calorie Cost : <label class='calculated-info' id='calorieCost'></label> kcal
+                            </li>
+                            <li style='width: 800px'>
+                                Assuming that recommended target of calories deficit (1000kcal / week) will be achieved in 7 days, your approximate gym cost saving /week for this activity will be :
+                                <label class='calculated-info' id='gymCost'></label> AUD
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr class='user-choice-row'>
+                    <td colspan="20" class='is-this-acceptable' style="padding-left: 100px">Is this option acceptable to you ?</td>
+                </tr>
+                <tr class='user-choice-radio-row'>
+                    <td colspan='20' class='user-choice'>
+                        <table width="100%">
+                            <tr>
+                                <td width="100px"></td>
+                                <td width="*" class="user-choice">
+                                    <input type='radio' name='option-choice' id='option-choice-yes' value="1" />
+                                    <label for='option-choice-yes' class='option-choice'>Yes</label> &nbsp;&nbsp;&nbsp;
+                                    <input type='radio' name='option-choice' id='option-choice-no' value="0" CHECKED/>
+                                    <label for='option-choice-no' class='option-choice'>No</label>
+                                </td>
+                                <td class='next-suggestion' width="250px">
+                                    <i class="arrow_right fa fa-arrow-right ml-2 fa-2x btn-to-next-suggestion">Next suggestion &nbsp;</i>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <form id='form_suggestions_save' action="{% url 'saveSuggestions' %}" enctype="application/x-www-form-urlencoded" method="post">
+        <input type='hidden' id='suggestions_to_save' name='suggestions_to_save' value=""> {% csrf_token %}
+    </form>
+</div>
+
+{%endblock%} {%block extrajs%}
+
+<script type='text/javascript' src="{% static 'vendor/survey/step4_calculated.js' %}"></script>
+<script type='text/javascript'>
+    suggestions = JSON.parse(`{{suggestions | safe}}`)
+    travelActivities = JSON.parse(`{{jsonTravelActivities | safe}}`)
+    index = 0
+    urlForStep5 = "{% url 'step5' %}"
+    updateView()
+
+    $(".btn-to-next-suggestion").click(toNextSuggestion)
+</script>
+
+{%endblock%}

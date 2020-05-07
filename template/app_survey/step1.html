@@ -1,0 +1,464 @@
+{%extends "main.html"%} {% load humanize %} {%block content%}
+
+<div class="container-fluid p-0 m-0">
+    <div class="row col-12 p-0 m-0">
+        <div class="col-md-12 intro_block bg_white p-0">
+            <h4 class="bg_gray col-12 mb-5 p-5 text-center p-0">
+                {%ifequal current_travel 1 %}
+                Step 1 - Please fill in the details of your travel activities <b><u>for any one day</u></b> that you did during last week.
+                <br/><br/>
+                {%endifequal%}
+                <b><u>Details of {{current_travel|ordinal}} Activity</u></b>
+            </h4>
+            <form class="col-12" action="{{request.path}}?current_travel={{current_travel}}" enctype="application/x-www-form-urlencoded" method="post">
+                <div class="row m-0 p-0">
+                    {{ frm_travel.non_field_errors }}
+                    <div class="col-12 col-md-6">
+                        <label for="travel_from">Travel from:</label> {%if frm_travel.travel_from_latitude.errors %} {{frm_travel.travel_from_latitude.errors}}{%endif%}
+                        <input type="text" class="hidden" name="travel_from_latitude" id="id_travel_from_latitude" value="{%if frm_travel.travel_from_latitude.value%}{{frm_travel.travel_from_latitude.value}}{%endif%}">
+                        <input type="text" class="hidden" name="travel_from_longitude" id="id_travel_from_longitude" value="{%if frm_travel.travel_from_longitude.value%}{{frm_travel.travel_from_longitude.value}}{%endif%}">
+                        <input type="text" id="travel_from" name="travel_from" class="form-control  mb-5" placeholder="please enter your address OR suburb OR nearest intersection" value="{%if frm_travel.travel_from.value%}{{frm_travel.travel_from.value}}{%endif%}" autocomplete="off"
+                            required {%ifequal current_travel 1 %}{%else%}readonly{%endifequal%}>
+                        <div id="map_from" style="width: 100%; height: 400px;"></div>
+                        <div id="infowindow-content_from" class="hidden">
+                            <span id="place-name" class="title"></span><br> Place ID <span id="place-id"></span><br> <span id="place-address"></span>
+                        </div>
+                        <div class="col-12 m-2">
+                            {%ifequal current_travel 1 %}
+                            <label for="free_purpose">Location of origin for this activity was: </label>
+                            <input type="text" class="form-control  mb-2" name="free_purpose" placeholder="Example: Home/Friend's home/ Other" value="{{exist_travel.free_purpose}}" required /> {%endifequal%}
+                            <label id="label_departure_time" for="id_departure_time">Departure time:</label>
+                            <input id="id_departure_time" class="timepicker form-control" type="text" name="departure_time" value="{%if frm_travel.departure_time.value%}{{frm_travel.departure_time.value|time:'h:i A'}}{%endif%}" autocomplete="off" required>                            {%if frm_travel.departure_time.errors %} {{frm_travel.departure_time.errors}}{%endif%}
+                        </div>
+                        <div class="col-12 m-2">
+                            <label for="id_purpose">Travel Purpose:</label> {{frm_travel.purpose}} {%if frm_travel.purpose.errors %} {{frm_travel.purpose.errors}}{%endif%}
+                        </div>
+                        {%ifequal current_travel 1 %} {%else%}
+                        <div class="free_purpose_wrapper {%if frm_travel.last_activity.value%}{%else%}hidden{%endif%}  m-4">
+                            <label for="free_purpose">Please write purpose:</label>
+                            <input type="text" class="form-control  mb-2" name="free_purpose" placeholder="Example: Friend's home" value="{{exist_travel.free_purpose}}" {%if exist_travel.free_purpose%}required{%endif%}>
+                        </div>
+                        {%endifequal%}
+                        <div class="col-12 m-2">
+                            <label for="id_travel_mode">Travel Mode:</label> {{frm_travel.travel_mode}}
+                        </div>
+                        {% ifequal next_travel 1 %} {% else %}
+                        <div class="col-12 m-4">
+                            {{frm_travel.last_activity}}
+                            <label for="id_last_activity ">                                
+                                Please tick this if this is your last activity of the day.
+                            </label>
+                        </div>
+                        {% endifequal %}
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label for="travel_to">Travel to:</label> {%if frm_travel.travel_to_latitude.errors %} {{frm_travel.travel_to_latitude.errors}}{%endif%}
+                        <input type="text" class="hidden" name="travel_to_latitude" id="id_travel_to_latitude" value="{%if frm_travel.travel_to_latitude.value%}{{frm_travel.travel_to_latitude.value}}{%endif%}">
+                        <input type="text" class="hidden" name="travel_to_longitude" id="id_travel_to_longitude" value="{%if frm_travel.travel_to_longitude.value%}{{frm_travel.travel_to_longitude.value}}{%endif%}">
+                        <input type="text" id="travel_to" name="travel_to" class="form-control mb-5" placeholder="please enter your address OR suburb OR nearest intersection" value="{%if frm_travel.travel_to.value%}{{frm_travel.travel_to.value}}{%endif%}" autocomplete="off"
+                            required>
+                        <div id="map_to" style="width: 100%; height: 400px;"></div>
+                        <div id="infowindow-content_to" class="hidden">
+                            <span id="place-name" class="title"></span><br> Place ID <span id="place-id"></span><br> <span id="place-address"></span>
+                        </div>
+                        <div class="col-12 m-2">
+                            <label id="label_arrival_time" for="id_arrival_time">Arrival time:</label>
+                            <input id="id_arrival_time" class="timepicker form-control" type="text" name="arrival_time" value="{%if frm_travel.arrival_time.value%}{{frm_travel.arrival_time.value|time:'h:i A'}}{%endif%}"> {%if frm_travel.arrival_time.errors%}
+                            {{frm_travel.arrival_time.errors}}{%endif%}
+                        </div>
+                        <div class="col-12 m-2">
+                            <div class='blank-row'></div>
+                            <label for="id_travel_mode">Was <b>"<font id='label_purpose'></font>"</b> activity flexible in terms of arriving <b><u>OR</u></b> departing <b><u>OR</u></b> its location?
+                                If Yes, please tick below in which of the following aspects it is flexible (you can tick more than one option)</label> {{frm_travel.flexibles}}
+                        </div>
+                        <div id="ctn_purpose_detail" class="col-12 hidden m-2">
+                            <label for="id_purpose_detail">
+                                Purpose Detail
+                            </label>
+                            <div id="purpose_detail_select">
+                                {{frm_travel.purpose_detail}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% csrf_token %}
+
+                <div class="row">
+                    <div class="col-12 col-md-6 p-5 text-center">
+                        <button class="btn btn-success">Save &gt; Next</button>
+                    </div>
+                    <div class="col-12 col-md-6 p-5 text-center">
+                        <a href="/survey/step1/?current_travel={{prev_travel}}" class="btn bg_yellow white ">back</a>
+                    </div>
+                </div>
+
+                <div id="myModal_ArrivalTimeChoices" class="modal">
+                    <div class="modal-inner">
+                        <span class="close">&times;</span>
+                        <center>
+                            <br/>
+                            <p>How much early could you arrive from the original arrival time:
+                                <input id="arrTimeChoice1" class='time-choice' type="text" value="0"/> minutes</p>
+                            <p>How much latest could you arrive from the original arrival time:
+                                <input id="arrTimeChoice2" class='time-choice' type="text" value="0"/> minutes</p>
+                        </center>
+                        <input name='time_choices_arrival' type="hidden" value="{%if exist_travel.time_choices_arrival%}{{exist_travel.time_choices_arrival}}{%endif%}">
+                    </div>
+                </div>
+                <div id="myModal_DepartureTimeChoices" class="modal">
+                    <div class="modal-inner">
+                        <span class="close">&times;</span>
+                        <center>
+                            <br/>
+                            <p>How much early could you depart from the original departure time:
+                                <input id="depTimeChoice1" class='time-choice' type="text" value="0"> minutes</p>
+                            <p>How much latest could you depart from the original departure time:
+                                <input id="depTimeChoice2" class='time-choice' type="text" value="0"> minutes</p>
+                        </center>
+                        <input name='time_choices_departure' type="hidden" value="{%if exist_travel.time_choices_departure%}{{exist_travel.time_choices_departure}}{%endif%}">
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{%endblock%} {%block extrajs%}
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA3L3Q5rCMHsMgixN6s6x9Y7vaSOHLSoJ4&libraries=places&callback=initMap" defer></script>
+
+<script>
+    $(document).ready(function() {
+        var purpose = $("#id_purpose :selected").text();
+        $("#label_purpose").html(purpose)
+
+        if ($("#id_last_activity").prop("checked") && purpose == "Other Purpose") {
+            $(".free_purpose_wrapper").removeClass("hidden")
+            $("[name='free_purpose']").prop('required', true);
+        }
+        else {
+            $(".free_purpose_wrapper").addClass("hidden")
+            // $("[name='free_purpose']").val("")
+            $("[name='free_purpose']").removeAttr("required")
+        }
+        $("#id_purpose").change(function() {
+            var purpose = $("#id_purpose :selected").text();
+            if ($("#id_last_activity").prop("checked") && purpose == "Other Purpose") {
+                $(".free_purpose_wrapper").removeClass("hidden")
+                $("[name='free_purpose']").prop('required', true);
+            }
+            else {
+                $(".free_purpose_wrapper").addClass("hidden")
+                $("[name='free_purpose']").val("")
+                $("[name='free_purpose']").removeAttr("required")
+            }
+
+            $("#label_purpose").html(purpose)
+        })
+        $("#id_last_activity").click(function(e) {
+            $(".free_purpose_wrapper").addClass("hidden")
+            $("[name='free_purpose']").val("")
+            $("[name='free_purpose']").removeAttr("required")
+            var purpose = $("#id_purpose :selected").text();
+            if ($("#id_last_activity").prop("checked") && purpose == "Other Purpose") {
+                $(".free_purpose_wrapper").removeClass("hidden")
+                $("[name='free_purpose']").prop('required', true);
+            } else {
+                $(".free_purpose_wrapper").addClass("hidden")
+                $("[name='free_purpose']").val("")
+                $("[name='free_purpose']").removeAttr("required")
+
+            }
+        })
+        check_purpose_detail_hide()
+        $('.timepicker').datetimepicker({
+            format: 'LT'
+        });
+        //$('.timepicker').timepicker({
+        //    timeFormat: 'h:mm p',
+        //    interval: 5,})
+        $("select").addClass("form-control")
+            /*
+            $("input").keydown(function(event){
+                if(event.keyCode == 13) {
+                  event.preventDefault();
+                  return false;
+                }
+              });
+            */
+        update_labels()
+
+        $("#travel_from").change(function() {
+            update_labels()
+        })
+        $("#travel_to").change(function() {
+            update_labels()
+        })
+
+        updateFlexibleLabels();
+
+        $("#id_purpose").change(function(e) {
+            $.get("/survey/purpose_detail/" + $("#id_purpose").val() + "/", "", function(res) {
+                $("#purpose_detail_select").html(res)
+                $("select").addClass("form-control")
+            }, "html")
+
+            updateFlexibleLabels();
+        })
+
+        $("[name='flexibles']").change(function(e) {
+            if ($(this).closest("label").text().trim() == "Not flexible at all" && $(this).is(':checked')) {
+                $(this).closest("#id_flexibles").find("input[type='checkbox']").prop('checked', false)
+                $(this).prop('checked', true)
+            } else {
+                $(this).closest("#id_flexibles").find("input[type='checkbox']").each(function(k, v) {
+                    if ($(this).closest("label").text().trim() == "Not flexible at all") {
+                        $(this).prop('checked', false)
+                    }
+                })
+            }
+
+            var checkLabel = $(this).closest("label").text().trim()
+            if (checkLabel.includes("Departure") && $(this).is(':checked'))
+                showModal("myModal_DepartureTimeChoices")
+            if (checkLabel.includes("Arrival") && $(this).is(':checked'))
+                showModal("myModal_ArrivalTimeChoices")
+
+            check_purpose_detail_hide()
+        })
+    })
+
+    function updateFlexibleLabels() {
+        {%ifequal current_travel 1 %}
+            $('[for="id_flexibles_0"]').contents().last()[0].textContent = " Departure time from 'Home'";
+        {%else%}
+            var purposeName = "{{prev_trav_object.purpose.name}}";
+            switch (purposeName) {
+                case "Shopping":
+                    purposeName = "Shop";
+                    break;
+                case "Work Related":
+                    purposeName = "Work";
+                    break;
+                case "Go Home":
+                    purposeName = "Home";
+                    break;
+            }
+            $('[for="id_flexibles_0"]').contents().last()[0].textContent = ` Departure time from '${purposeName}'`;
+        {%endifequal %}
+
+            var purposeName2 = $("#id_purpose :selected").text();
+            switch (purposeName2) {
+                case "Shopping":
+                    purposeName2 = "Shop";
+                    break;
+                case "Work Related":
+                    purposeName2 = "Work";
+                    break;
+                case "Go Home":
+                    purposeName2 = "Home";
+                    break;
+            }
+            $('[for="id_flexibles_1"]').contents().last()[0].textContent = ` Arrival time at '${purposeName2}'`;
+            $('[for="id_flexibles_2"]').contents().last()[0].textContent = ` Location of '${purposeName2}'`;
+    }
+
+    function initMap() {
+        var map_from = new google.maps.Map(document.getElementById('map_from'), {
+            center: {
+                lat: {%if frm_travel.travel_from_latitude.value %} {{frm_travel.travel_from_latitude.value}} {%else %} - 33.8688 {% endif %},
+                lng: {%if frm_travel.travel_from_longitude.value %} {{frm_travel.travel_from_longitude.value}} {%else %} 151.2195 {% endif %}
+            },
+            zoom: 13
+        });
+
+        var map_to = new google.maps.Map(document.getElementById('map_to'), {
+            center: {
+                lat: {%if frm_travel.travel_to_latitude.value %} {{frm_travel.travel_to_latitude.value}} {%else %} - 33.8688 {% endif %},
+                lng: {%if frm_travel.travel_to_longitude.value %} {{frm_travel.travel_to_longitude.value}} {%else %}151.2195 {% endif %}
+            },
+            zoom: 13
+        });
+
+        var input_from = document.getElementById('travel_from');
+
+        var autocomplete_from = new google.maps.places.Autocomplete(input_from);
+        //autocomplete_from.setTypes(['address'])
+        //autocomplete_from.bindTo('bounds', map_from);
+
+        var input_to = document.getElementById('travel_to');
+
+        var autocomplete_to = new google.maps.places.Autocomplete(input_to);
+        //autocomplete_to.setTypes(['address'])
+        //autocomplete_to.bindTo('bounds', map_from);
+        //map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+        var infowindow_from = new google.maps.InfoWindow();
+        var infowindowContent_from = document
+            .getElementById('infowindow-content_from');
+        infowindow_from.setContent(infowindowContent_from);
+        var marker_from = new google.maps.Marker({
+            map: map_from
+        });
+        marker_from.addListener('click', function() {
+            infowindow.open(map_from, marker_from);
+        });
+
+
+        var infowindow_to = new google.maps.InfoWindow();
+        var infowindowContent_to = document
+            .getElementById('infowindow-content_to');
+        infowindow_to.setContent(infowindowContent_to);
+        var marker_to = new google.maps.Marker({
+            map: map_to
+        });
+        marker_to.addListener('click', function() {
+            infowindow.open(map_to, marker_to);
+        });
+
+
+        autocomplete_from.addListener('place_changed', function() {
+            update_labels()
+            infowindow_from.close();
+            var place = autocomplete_from.getPlace();
+            if (!place.geometry) {
+                return;
+            }
+
+            if (place.geometry.viewport) {
+                map_from.fitBounds(place.geometry.viewport);
+            } else {
+                map_from.setCenter(place.geometry.location);
+                map_from.setZoom(24);
+            }
+            // Set the position of the marker using the place ID and location.
+            marker_from.setPlace({
+                placeId: place.place_id,
+                location: place.geometry.location
+            });
+            marker_from.setVisible(true);
+            /*
+                        infowindowContent.children['place-name'].textContent = place.name;
+                        infowindowContent.children['place-id'].textContent = place.place_id;
+                        infowindowContent.children['place-address'].textContent =
+                            place.formatted_address;
+                        infowindow.open(map, marker);
+                        */
+            set_input_location("from", place.geometry.location.lat(), place.geometry.location.lng());
+
+        });
+
+        google.maps.event.addDomListener(input_from, 'keydown', function(e) {
+            if (e.keyCode == 13 && $('.pac-container:visible').length) {
+                e.preventDefault();
+            }
+        });
+
+
+        autocomplete_to.addListener('place_changed', function() {
+            update_labels()
+            infowindow_to.close();
+            var place = autocomplete_to.getPlace();
+            if (!place.geometry) {
+                return;
+            }
+
+            if (place.geometry.viewport) {
+                map_to.fitBounds(place.geometry.viewport);
+            } else {
+                map_to.setCenter(place.geometry.location);
+                map_to.setZoom(24);
+            }
+
+            // Set the position of the marker using the place ID and location.
+            marker_to.setMap(map_to);
+            marker_to.setPlace({
+                placeId: place.place_id,
+                location: place.geometry.location
+            });
+            marker_to.setVisible(true);
+            /*
+            infowindowContent.children['place-name'].textContent = place.name;
+            infowindowContent.children['place-id'].textContent = place.place_id;
+            infowindowContent.children['place-address'].textContent =
+                place.formatted_address;
+            infowindow.open(map, marker);
+            */
+            set_input_location("to", place.geometry.location.lat(), place.geometry.location.lng());
+        });
+
+        google.maps.event.addDomListener(input_to, 'keydown', function(e) {
+            if (e.keyCode == 13 && $('.pac-container:visible').length) {
+                e.preventDefault();
+            }
+        });
+    }
+
+    function update_labels() {
+        label_from = $("#travel_from").val()
+        label_to = $("#travel_to").val()
+        $("#label_arrival_time").html("Approximate Arrival Time to <b> " + label_to + " <b>:")
+        $("#label_departure_time").html("Approximate Departure Time from <b> " + label_from + " </b>:")
+    }
+
+    function set_input_location(input, lat, log) {
+        $('[name="travel_' + input + '_latitude"]').val(lat)
+        $('[name="travel_' + input + '_longitude"]').val(log)
+    }
+
+    function check_purpose_detail_hide() {
+        $("#ctn_purpose_detail").addClass("hidden")
+        if ($("#id_purpose_detail option").length > 1) {
+            /*
+            var felxible=false;
+            $("[name='flexibles']").each(function(k,v){
+                if($(v).prop("checked"))
+                {
+                    felxible=true;
+                    return;
+                }
+            })
+            if(felxible)
+            {
+                $("#ctn_purpose_detail").removeClass("hidden")        
+            }
+            */
+            $("#ctn_purpose_detail").removeClass("hidden"); // if travel-purpose is flexible activity, then just show the purpose detail form even no flexible option was checked.
+        }
+    }
+
+
+    // When the user clicks on <span> (x), close the modal
+    $('.close').click(function() {
+        hideTimeChoiceModal()
+    })
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if ($(event.target).attr('class') == "modal") {
+            hideTimeChoiceModal()
+        }
+    }
+
+    function hideTimeChoiceModal() {
+        CNT_TIME_CHOICES = 2
+
+        var modal = document.getElementById('myModal_ArrivalTimeChoices')
+        modal.style.display = "none"
+        var listTimeChoices = []
+        var sign = ["", "-", ""]
+        for (var i = 1; i <= CNT_TIME_CHOICES; i++)
+            listTimeChoices.push(sign[i] + $('#arrTimeChoice' + i).val())
+        $("[name='time_choices_arrival']").val("" + listTimeChoices)
+
+        modal = document.getElementById('myModal_DepartureTimeChoices')
+        modal.style.display = "none"
+        listTimeChoices = []
+        for (var i = 1; i <= CNT_TIME_CHOICES; i++)
+            listTimeChoices.push(sign[i] + $('#depTimeChoice' + i).val())
+        $("[name='time_choices_departure']").val("" + listTimeChoices)
+    }
+</script>
+
+{%endblock%}

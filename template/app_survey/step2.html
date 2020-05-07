@@ -1,0 +1,127 @@
+{%extends "main.html"%} {%block content%}
+
+<div class="container-fluid p-0 m-0">
+    <div class="row col-12 p-0 m-0">
+        <div class="col-md-12 diagram_block bg_white p-0">
+            <h2 class="bg_gray col-12 mb-5 p-5 text-center p-0">
+                Step 2 </h2>
+            <div class="diagram_container">
+                <div class="back_line"></div>
+                <ul class="diagram">
+                    {%for travel in travels%}
+                    <li class="travel" data-position="{{travel.position|add:1}}">
+                        <span class="ctn">
+                            <span class="purpose p-2 m-2 br_1 bg_blue mb-3 white">
+                                {%if forloop.first%}
+                                <!--{{travel.free_purpose}} -->
+                                Home
+                                {%else%}
+                                {%if forloop.last and travel.free_purpose%}
+                                {{travel.free_purpose}}
+                                {%else%}
+                                {%if travel.purpose_detail%}
+                                {{travel.purpose_detail.name}}
+                                {%else%}
+                                {%ifequal travel.purpose.name "Go Home"%}
+                                Home
+                                {%else%}
+                                {{travel.purpose}}
+                                {%endifequal%}
+                                {%endif%}
+                                {%endif%}
+                                {%endif%}
+                            </span>
+                            {%if forloop.first%}
+                            {{travel.travel_from|truncatewords:4}}
+                            {%else%}
+                            {{travel.travel_to|truncatewords:4}}
+                            {%endif%}
+                            <br>
+                        </span>
+
+                        <span class="travel_footer">
+                            {%if forloop.first%}
+                            {{travel.departure_time|time:'h:i A'}}
+                            {%else%}
+                            {%if forloop.last%}
+                            {{travel.arrival_time|time:'h:i A'}}
+                            {%else%}
+                            {{travel.arrival_time|time:'h:i A'}}
+                            {% for anotherTravel in travels %}
+                            {% if forloop.counter == forloop.parentloop.counter|add:1 %}
+                            - {{anotherTravel.departure_time|time:'h:i A'}}
+                            {%endif%}
+                            {% endfor %}
+                            {%endif%}
+                            {%endif%}
+                            <br />
+                            {%ifequal travel.type "car"%}
+                            <i class="fa fa-car ml-2"></i>
+                            {%endifequal%}
+                            {%ifequal travel.type "walking"%}
+                            <i class="fa fa-walking ml-2"></i>
+                            {%endifequal%}
+                            {%ifequal travel.type "public"%}
+                            <i class="fa fa-bus-alt ml-2"></i>
+                            {%endifequal%}
+                            {{travel.get_travel_mode_display|truncatechars:15}}
+                        </span>
+                    </li>
+
+                    {%if not forloop.last%}
+                    <li class="arrow">
+                        <i class=" arrow_right fa fa-arrow-right ml-2 fa-2x"></i>
+                    </li>
+                    {%endif%}
+
+
+                    {%endfor%}
+
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-12 weight_block bg_white p-0">
+            <form action="{{request.post}}" method="post">
+                <div style='margin-left: 25%'>
+                    <p>•	Based on your current activities, we will show you some <b><i>suggestions</i></b> with the use of <b><u>active modes</u></b> in the following survey pages.</p>
+                    <p>•	Please click <b><u>yes</u></b> if that suggestion is accepatable for you or <b><u>no</u></b> if that suggestion is not acceptable for you.</p>
+                    <br/>
+                    <p>•	Please tell us your <b><u>approximate weight (in kilograms)</u></b>. </p>
+                    <p>•    This will be used in further calculations for your <b><u>calories burned </u></b>for the activities we suggest. </p>
+                </div>
+                <div class='text-center'>
+                    <label class="personal-info-label">Please insert your weight:</label>
+                    <input type="number" class="p-2 input_basedata" name="weight" id="id_weight"
+                        value="{% if personalInfo.weight.value%}{{personalInfo.weight.value}}{%endif%}" required>
+                </div>
+                <div style='margin-left: 25%'>
+                    <br/>
+                    <p>•	Please tell us your <b><u>Gym cost per week in AUD</u></b> ( you can tell your previous cost if you no longer go to gym or the future cost if you are planning to go to gym in near future ). </p>
+                    <p>•	This will be used to calculate the gym cost saving for the activities we suggest.</p>                    
+                </div>
+                <div class='text-center'>
+                    <label class="personal-info-label">Gym cost per week in AUD:</label>
+                    <input type="number" class="p-2 input_basedata" name="cost_gym" id="id_cost_gym"
+                    value="{% if personalInfo.cost_gym.value%}{{personalInfo.cost_gym.value}}{%endif%}" required>
+                    <p></p>
+                    <p><b><u>Note:</u></b> If you do not go to gym, please enter zero, we will use the <b><u>default value of 15 AUD per week</u></b>.</p>
+                </div>
+                <div class='text-center'>
+                    <p>&nbsp;</p>
+                    <input type="submit" class="btn bg_green white " value="Submit & Continue">
+                    {% csrf_token %}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $(".arrow_left").click(function () {
+            $.get("/move/left/" + $(this).closest("li").data("position"))
+            window.location.href = "{{request.path}}";
+            window.location.reload();
+        })
+    })
+</script>
+{%endblock%}

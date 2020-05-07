@@ -1,0 +1,95 @@
+{%extends "main.html"%} {%block content%}
+
+<div class="container-fluid p-0 m-0">
+    <div class="row col-12 p-0 m-0">
+        <div class="col-md-12 intro_block bg_white p-0">
+            <!-- <h2 class="gray bg_gray col-12 mb-5 p-5 text-center p-0">
+                Intro
+            </h2> -->
+            <div class="p-5 m-5">
+                Dear Participant, <br/>
+                Thank you for taking part in survey. This study is being conducted by researchers from Research Centre for Integrated Transport Innovation at the School of Civil & Environmental Engineering, the University of New South Wales Sydney. <br/>
+                The research study aims to examine the preferences and perceptions about active mode usage and travel activities. This analysis will be helpful in devising the policies related to sustainability of environment. <br/>
+                Please DO NOT USE the "back" and "forward" buttons in your browser. Please use the buttons at the bottom of each screen. <br/>
+                The survey should take approximately <b>20 minutes</b> to complete. <br/>
+                <p><b><u>Important note to fill the survey:</u></b></p>
+                Please fill in the survey if you meet the following criteria: <br/>
+                    &emsp;&emsp; •	You are above 18 years of age  <br/>
+                    &emsp;&emsp; •	If you have conducted and remember your previous trips during the last week with non-work activities such as shopping, recreational and social activities. <br/>
+                    &emsp;&emsp; •	If you have carried out the above-mentioned activities with auto including motorcycle, van, taxi service, or dropped by someone by car. <br/>
+                Participation in any research project is voluntary. If you do not want to take part, you do not have to. If you decide to take part and later change your mind, you are free to withdraw from the project at any stage. Your decision will not affect your relationship with the university. <br/>
+                <p><b>What do we want you to do?</b></p>
+                In first part of the survey some questions will be asked about your previous travel activity. Then some travel activities suggestions will be shown involving active modes and you have to answer “yes” or “no” for that. There are no right or wrong answers. Please answer all the questions in each section. <br/>
+                Note that this survey is for research purposes only and it does not form part of any promotional activity. In accordance with the Privacy Principles that apply to market research conducted by the rCITI, your responses will be treated in the strictest confidence. The results are aggregated, and no identifying details will be disclosed to the client or any other third party, and your anonymity will be protected. <br/>
+                <p><b>This survey has been granted an ethics approval (HC190888)</b>.</p>
+                If you have any concerns, comments or feedback regarding the survey, please feel free to contact the following people: <br/>
+                <table>
+                    <tr>
+                        <td>Name:</td>
+                        <td>&emsp; Taha H. Rashidi, PhD</td>
+                    </tr>
+                    <tr>
+                        <td>Position:</td>
+                        <td>&emsp; Associate Professor</td>                        
+                    </tr>
+                    <tr>
+                        <td>Telephone:</td>
+                        <td>&emsp; +61 2 9385 5063</td>
+                    </tr>
+                    <tr>
+                        <td>Email:</td>
+                        <td>&emsp; rashidi@unsw.edu.au</td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <td>Name:</td>
+                        <td>&emsp; Kiran Shakeel</td>
+                    </tr>
+                    <tr>
+                        <td>Position:</td>
+                        <td>&emsp; PhD candidate</td>                        
+                    </tr>
+                    <tr>
+                        <td>Email:</td>
+                        <td>&emsp; kiran.shakeel@unw.edu.au</td>
+                    </tr>
+                    <tr></tr>
+                </table>
+                <br/>
+                <p><b>Declaration by the participant</b></p>
+                <input type='checkbox' class='declaration' id='declaration_1'> <label for='declaration_1'>&emsp;I understand I am being asked to provide consent to participate in this research project.</label> <br/>
+                <input type='checkbox' class='declaration' id='declaration_2'> <label for='declaration_2'>&emsp;I have read the Participant Information Sheet or someone has read it to me in a language that I understand.</label> <br/>
+                <input type='checkbox' class='declaration' id='declaration_3'> <label for='declaration_3'>&emsp;I understand the purposes, study tasks and risks of the research described in the project.</label> <br/>
+                <input type='checkbox' class='declaration' id='declaration_4'> <label for='declaration_4'>&emsp;I understand that, if necessary, I can ask questions and the research team will respond to my questions.</label> <br/>
+                <input type='checkbox' class='declaration' id='declaration_5'> <label for='declaration_5'>&emsp;I provide my consent for the information collected about me to be used for the purpose of this research study only.</label> <br/>
+                <input type='checkbox' class='declaration' id='declaration_6'> <label for='declaration_6'>&emsp;I freely agree to participate in this research study as described and understand that I am free to withdraw at any time during the project and withdrawal will not affect my relationship with any of the named organisations and/or research team members.</label> <br/>
+            </div>
+            <div class="row m-0 p-0">
+                <div class="col-12 col-md-6 p-5 text-center">
+                    <a href="/survey/step1/" class="btn btn-success btn-agree disabled">Agree to participate</a>
+                </div>
+                <div class="col-12 col-md-6 p-5 text-center">
+                    <a href="/survey/finish0/" class="btn bg_yellow red btn-disagree">Do not agree to participate</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    updateButtonStatus()        // initialization
+
+    function updateButtonStatus() {
+        let CNT = 6
+        for (var i = 1; i <= CNT; i ++)
+            if (!$('#declaration_' + i).prop('checked')) break
+        if (i <= CNT) $('.btn-agree').addClass('disabled')
+        else $('.btn-agree').removeClass('disabled')
+    }
+
+    $('.intro_block .declaration').click(function(){
+        updateButtonStatus()
+    })
+</script>
+{%endblock%}

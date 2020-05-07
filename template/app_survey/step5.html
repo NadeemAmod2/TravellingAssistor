@@ -1,0 +1,379 @@
+{%extends "main.html"%}
+{% load static %}
+{%block content%}
+
+<form class='step5' action="{% url 'saveDemographicInfos' %}"
+      enctype="application/x-www-form-urlencoded" method="post">
+  <div class="container-fluid p-0 m-0">
+    <div class="row col-12 p-0 m-0">
+      <div class="col-md-12 diagram_block bg_white p-0">
+        <h2 class="bg_gray col-12 mb-5 p-5 text-center p-0">
+          Step 5. Sociodemographic questions
+        </h2>
+      </div>
+      
+      <div class="col-md-12 instruction">
+        <h4 class='instruction big'>
+              Please answer some questions about your demographics below :
+        </h4>
+      </div>
+      <div class='col-md-2'></div>
+      <div class='col-md-4'>
+        <ol class='demographic-questions'>
+          <li>
+            <p>What is your gender ?</p>
+              <ul class='choices'>
+                <li>
+                  <label><input type='radio' name='gender' value='male' required> male</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='gender' value='female' required> female</label>
+                </li>
+              </ul>
+          </li>
+          <li>
+            <p>Are you married ?</p>
+              <ul class='choices'>
+                <li>
+                  <label><input type='radio' name='marriage' value='yes' required> yes</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='marriage' value='no' required> no</label>
+                </li>
+              </ul>
+          </li>
+          <li>
+            <p>Which of the following age range you belong to :</p>
+              <ul class='choices'>
+                <li>
+                  <label><input type='radio' name='age' value='<12' required> less than 12 years</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='age' value='12~15' required> 12 ~ 15 years</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='age' value='16~20' required> 16 ~ 20 years</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='age' value='21~25' required> 21 ~ 25 years</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='age' value='26~30' required> 26 ~ 30 years</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='age' value='31~35' required> 31 ~ 35 years</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='age' value='36~40' required> 36 ~ 40 years</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='age' value='41~45' required> 41 ~ 45 years</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='age' value='46~50' required> 46 ~ 50 years</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='age' value='51~55' required> 51 ~ 55 years</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='age' value='56~60' required> 56 ~ 60 years</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='age' value='>60' required> greater than 60 years have</label>
+                </li>
+              </ul>
+          </li>
+          <li>
+            <p>Which of the following employment status are you in ?</p>
+              <ul class='choices'>
+                <li>
+                  <label><input type='radio' name='employment_status' value='full-time' required> Full-time employed</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='employment_status' value='part-time' required> Part-time employed</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='employment_status' value='not-employed' required> Not employed</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='employment_status' value='retired' required> Retired</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='employment_status' value='housewife' required> I am a housewife and not employed</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='employment_status' value='househusband' required> I am a househusband and not employed</label>
+                </li>
+              </ul>
+          </li>
+          <li>
+            <p>Which of the following student category you belong :</p>
+              <ul class='choices'>
+                <li>
+                  <label><input type='radio' name='student_category' value='full-time' required> Full-time student</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='student_category' value='part-time' required> Part-time student</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='student_category' value='not-student' required> Not a student</label>
+                </li>
+              </ul>
+          </li>
+          <li>
+            <p>Which of the following latest/current study level do you have :</p>
+              <ul class='choices'>
+                <li>
+                  <label><input type='radio' name='study_level' value='high-school' required> high school</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='study_level' value='undergraduate_diploma' required> undergraduate / diploma</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='study_level' value='graduate' required> graduate</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='study_level' value='postgraduate_higherstudies' required> Post-graduate / higher studies</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='study_level' value='none' required> None of these</label>
+                </li>
+              </ul>
+          </li>
+          <li>
+            <p>Which of the following ethnicities you belong to ?</p>
+              <ul class='choices'>
+                <li>
+                  <label><input type='radio' name='ethnicity' value='native_australian' required> Native to Australia </label>
+                </li>
+                <li>
+                  <label><input type='radio' name='ethnicity' value='we' required> Western European</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='ethnicity' value='ee' required> Eastern European</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='ethnicity' value='me' required> Middle East</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='ethnicity' value='as' required> Asian</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='ethnicity' value='am' required> American</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='ethnicity' value='af' required> African</label>
+                </li>
+              </ul>
+          </li>        
+        </ol>
+      </div>
+      <div class='col-md-6'>
+        <ol class='demographic-questions' start='8'>
+          <li>
+            <p>How many number of people are in your household (including adults and children) ? Please include yourself in the count as well.</p>
+              <ul class='choices'>
+                <li>
+                  <label><input type='radio' name='cnt_household' value='2' required> 2 </label>
+                </li>
+                <li>
+                  <label><input type='radio' name='cnt_household' value='3' required> 3</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='cnt_household' value='4' required> 4</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='cnt_household' value='>4' required> more than 4</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='cnt_household' value='single' required> Single and live in sharing</label>
+                </li>              
+              </ul>
+          </li>
+          <li>
+            <p>How many children (less than 12 years of age) are in your household ?</p>
+              <ul class='choices'>
+                <li>
+                  <label><input type='radio' name='cnt_children' value='0' required> 0 </label>
+                </li>
+                <li>
+                  <label><input type='radio' name='cnt_children' value='1~2' required> 1 ~ 2</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='cnt_children' value='>2' required> more than 2</label>
+                </li>
+              </ul>
+          </li>
+          <li>
+            <p>Which of the following travel modes does your household own ? (You can tick more than one option)</p>
+              <ul class='choices'>
+                <li>
+                  <label><input type='checkbox' name='travel_mode' value='car' onclick='showModal("myModal_TravelMode_Car")'> Cars</label>
+                </li>
+                <li>
+                  <label><input type='checkbox' name='travel_mode' value='bicycle' onclick='showModal("myModal_TravelMode_Bicycle")'> Bicycle</label>
+                </li>
+                <li>
+                  <label><input type='checkbox' name='travel_mode' value='motorbike' onclick='showModal("myModal_TravelMode_Motorbike")'> Motorbike</label>
+                </li>
+              </ul>
+              <div id="myModal_TravelMode_Car" class="modal question">
+                <div class="modal-inner">
+                  <span class="close">&times;</span>
+                  <br/>
+                  <strong>How many cars ? &nbsp;&nbsp;&nbsp;</strong>
+                  <input name='cnt_cars' type="text" class="form-control question">
+                </div>
+              </div>
+              <div id="myModal_TravelMode_Bicycle" class="modal question">
+                <div class="modal-inner">
+                  <span class="close">&times;</span>
+                  <br/>
+                  <strong>How many bicycles ? &nbsp;&nbsp;&nbsp;</strong>
+                  <input name='cnt_bicycles' type="text" class="form-control question">
+                </div>
+              </div>
+              <div id="myModal_TravelMode_Motorbike" class="modal question">
+                <div class="modal-inner">
+                  <span class="close">&times;</span>
+                  <br/>
+                  <strong>How many motorbikes ? &nbsp;&nbsp;&nbsp;</strong>
+                  <input name='cnt_motorbikes' type="text" class="form-control question">
+                </div>
+              </div>
+          </li>
+          <li>
+            <p>Do you have a driver’s licence ?</p>
+              <ul class='choices'>
+                <li>
+                  <label><input type='radio' name='driver_licence' value='yes' required> Yes</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='driver_licence' value='no' required> No</label>
+                </li>
+              </ul>
+          </li>
+          <li>
+            <p>Which of the following annual income category your household fall into ?</p>
+              <ul class='choices'>
+                <li>
+                  <label><input type='radio' name='annual_income' value='<25k' required> less than 25,000AUD</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='annual_income' value='25~40k' required> 25,000AUD to 40,000AUD</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='annual_income' value='40~80k' required> 40,000AUD to 80,000AUD</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='annual_income' value='80~100k' required> 80,000AUD to 100,000AUD</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='annual_income' value='100~140k' required> 100,000AUD to 140,000AUD</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='annual_income' value='>140k' required> greater than 140,000AUD</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='annual_income' value='secret' required> Do not want to inform</label>
+                </li>
+              </ul>
+          </li>
+          <li>
+            <p>Approximately, how many hours per day is your general internet usage ?</p>
+              <ul class='choices'>
+                <li>
+                  <label><input type='radio' name='internet_usage' value='<2' required> less than 2 hours </label>
+                </li>
+                <li>
+                  <label><input type='radio' name='internet_usage' value='2~4' required> 2 ~ 4 hours</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='internet_usage' value='4~6' required> 4 ~ 6 hours</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='internet_usage' value='>6' required> greater than 6 hours</label>
+                </li>
+              </ul>
+          </li>
+          <li>
+            <p>Approximately, how many days per week is your internet usage for entertainment ?</p>
+              <ul class='choices'>
+                <li>
+                  <label><input type='radio' name='internet_usage_entertain' value='<1' required> less than 1 day </label>
+                </li>
+                <li>
+                  <label><input type='radio' name='internet_usage_entertain' value='1~2' required> 1 ~ 2 days</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='internet_usage_entertain' value='2~4' required> 2 ~ 4 days</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='internet_usage_entertain' value='4~6' required> 4 ~ 6 days</label>
+                </li>
+              </ul>
+          </li>
+          <li>
+            <p>Approximately, how many days per week is your internet usage for shopping ?</p>
+              <ul class='choices'>
+                <li>
+                  <label><input type='radio' name='internet_usage_shopping' value='<1' required> less than 1 day </label>
+                </li>
+                <li>
+                  <label><input type='radio' name='internet_usage_shopping' value='1~2' required> 1 ~ 2 days</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='internet_usage_shopping' value='2~4' required> 2 ~ 4 days</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='internet_usage_shopping' value='4~6' required> 4 ~ 6 days</label>
+                </li>
+              </ul>
+          </li>
+          <li>
+            <p>Do you work from home occasionally ?</p>
+              <ul class='choices'>
+                <li>
+                  <label><input type='radio' name='work_home' value='yes' onclick='showModal("myModal_WorkHome")' required> Yes</label>
+                </li>
+                <li>
+                  <label><input type='radio' name='work_home' value='no' required> No</label>
+                </li>
+              </ul>
+              <div id="myModal_WorkHome" class="modal question">
+                <div class="modal-inner">
+                  <span class="close">&times;</span>
+                  <br/>
+                  <strong>How many days per week ? &nbsp;&nbsp;&nbsp;</strong>
+                  <input name='cnt_days_per_week' type="text" class="form-control question">
+                </div>
+              </div>
+          </li>
+        </ol>
+      </div>
+
+      <div class="col-md-12 text-center">
+        <button class="btn btn-success">Save & Finish</button>
+        {% csrf_token %}
+      </div>
+    </div>
+  </div>
+</form>
+{%endblock%}
+{%block extrajs%}
+
+<script type='text/javascript' src="{% static 'vendor/survey/step5.js' %}"></script>
+<script>  
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function(event) {
+      if ($(event.target).hasClass("modal")) {
+        event.target.style.display = "none"
+      }
+  }
+  // When the user clicks on <span> (x), close the modal
+    $('.close').click(function() {
+        $(".modal.question").hide()
+    })
+
+</script>
+{%endblock%}

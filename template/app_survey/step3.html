@@ -1,0 +1,436 @@
+{%extends "main.html"%} {%block content%}
+
+<div class="container-fluid p-0 m-0">
+  <div class="row col-12 p-0 m-0">
+    <div class="col-md-12 diagram_block bg_white p-0">
+      <h2 class="bg_gray col-12 mb-5 p-5 text-center p-0">
+        Step 3</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12 col-md-6 text-center">
+    </div>
+    <div class="col-12 col-md-6 text-center">
+      <a href="/survey/step4" class="btn btn-success">Show suggestions</a>
+    </div>
+  </div>
+  <div class="row col-12 p-0 m-0">
+    <div class="diagram_container">
+      <div class="back_line"></div>
+      <ul class="diagram ">
+
+        {%for travel in travels%}
+        <li class="travel" data-position="{{travel.position|add:1}}">
+
+          <span class="ctn">
+            <span class="purpose p-2 m-2 br_1 bg_blue mb-3 white">
+              {%if forloop.first%}
+              <!--{{travel.free_purpose}} -->
+              Home
+              {%else%}
+              {%if forloop.last and travel.free_purpose%}
+              {{travel.free_purpose}}
+              {%else%}
+              {%if travel.purpose_detail%}
+              {{travel.purpose_detail.name}}
+              {%else%}
+              {%ifequal travel.purpose.name "Go Home"%}
+              Home
+              {%else%}
+              {{travel.purpose}}
+              {%endifequal%}
+              {%endif%}
+              {%endif%}
+              {%endif%}
+
+            </span>
+
+            {%if forloop.first%}
+            {{travel.travel_from|truncatewords:4}}
+            {%else%}
+            {{travel.travel_to|truncatewords:4}}
+            {%endif%}
+            <br>
+
+          </span>
+
+          <span class="travel_footer">
+            {%if forloop.first%}
+            {{travel.departure_time|time:'h:i A'}}
+            {%else%}
+            {%if forloop.last%}
+            {{travel.arrival_time|time:'h:i A'}}
+            {%else%}
+            {{travel.arrival_time|time:'h:i A'}}
+            {% for anotherTravel in travels %}
+            {% if forloop.counter == forloop.parentloop.counter|add:1 %}
+            - {{anotherTravel.departure_time|time:'h:i A'}}
+            {%endif%}
+            {% endfor %}
+            {%endif%}
+            {%endif%}
+            <br />
+            {%ifequal travel.type "car"%}
+            <i class=" fa fa-car ml-2 "></i>
+            {%endifequal%}
+            {%ifequal travel.type "walking"%}
+            <i class=" fa fa-walking ml-2 "></i>
+            {%endifequal%}
+            {%ifequal travel.type "public"%}
+            <i class=" fa fa-bus-alt ml-2 "></i>
+            {%endifequal%}
+            {{travel.get_travel_mode_display|truncatechars:15}}
+          </span>
+
+        </li>
+
+        {%if not forloop.last%}
+        <li class="arrow">
+          <i class=" arrow_right fa fa-arrow-right ml-2 fa-2x"></i>
+        </li>
+        {%endif%}
+
+        {% for result in results %}
+        {%if result.position == travel.position%}
+        <script type="text/javascript">
+          var results = {{ result.result| safe}};
+          window.travel = { "lng": {{ travel.travel_from_longitude }},
+          "lat": { { travel.travel_from_latitude } } }
+
+        </script>
+
+        {%for result in result.result%}
+        <!-- {{result.name}} 
+                    <br/> -->
+        {%endfor%}
+        {%endif%}
+        {% endfor %}
+
+        {%endfor%}
+
+      </ul>
+    </div>
+    <div class="row col-12 map_info_ctn text-center">
+      <!-- client said she doesn't need any google-map here -->
+      <div id="map_info" class="map_info" style='display:none'>
+      </div>
+
+    </div>
+    <div id="map" style="width: 100%; height: 400px;"></div>
+    <ul id="results">
+
+    </ul>
+    <div style="display: none">
+      <div id="info-content">
+        <table>
+          <tr id="iw-url-row" class="iw_table_row">
+            <td id="iw-icon" class="iw_table_icon"></td>
+            <td id="iw-url"></td>
+          </tr>
+          <tr id="iw-address-row" class="iw_table_row">
+            <td class="iw_attribute_name">Address:</td>
+            <td id="iw-address"></td>
+          </tr>
+          <tr id="iw-phone-row" class="iw_table_row">
+            <td class="iw_attribute_name">Telephone:</td>
+            <td id="iw-phone"></td>
+          </tr>
+          <tr id="iw-rating-row" class="iw_table_row">
+            <td class="iw_attribute_name">Rating:</td>
+            <td id="iw-rating"></td>
+          </tr>
+          <tr id="iw-website-row" class="iw_table_row">
+            <td class="iw_attribute_name">Website:</td>
+            <td id="iw-website"></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+{%endblock%}
+{%block extrajs%}
+
+<script>
+  var markers = [];
+  var MARKER_PATH = 'https://developers.google.com/maps/documentation/javascript/images/marker_green';
+  var map, places, infoWindow;
+
+
+
+  function initMap() {
+    map = new google.maps.Map(document.getElementById('map'),
+      {
+        center: {
+          lat: travel.lat,
+          lng: travel.lng
+        },
+        zoom: 15
+      });
+    places = new google.maps.places.PlacesService(map);
+
+
+    infoWindow = new google.maps.InfoWindow({
+      content: document.getElementById('info-content')
+    });
+    var size = 5;
+    results = results.slice(0, size)
+    for (var i = 0; i < results.length; i++) {
+      var markerLetter = String.fromCharCode('A'.charCodeAt(0) + (i % 26));
+      var markerIcon = MARKER_PATH + markerLetter + '.png';
+      markers[i] = new google.maps.Marker({
+        position: results[i].geometry.location,
+        animation: google.maps.Animation.DROP,
+        icon: markerIcon
+      });
+    }
+    /*for (var i = 0; i < results.length; i++) {
+              var markerLetter = String.fromCharCode('A'.charCodeAt(0) + (i % 26));
+              var markerIcon = MARKER_PATH + markerLetter + '.png';
+              // Use marker animation to drop the icons incrementally on the map.
+              markers[i] = new google.maps.Marker({
+                position: results[i].geometry.location,
+                animation: google.maps.Animation.DROP,
+                icon: markerIcon
+              });
+              // If the user clicks a hotel marker, show the details of that hotel
+              // in an info window.
+              markers[i].placeResult = results[i];
+              //google.maps.event.addListener(markers[i], 'click', showInfoWindow);
+              //google.maps.event.addListener(markers[i], 'click', showRoute);
+              google.maps.event.addListener(markers[i], 'click', matrixRoute);
+              
+              setTimeout(dropMarker(i), i * 100);
+              addResult(results[i], i);
+            }
+    */
+    matrixRoutes(markers)
+  }
+  function matrixRoutes(markers) {
+    var points = []
+    for (var i = 0; i < markers.length; i++) {
+      points[i] = markers[i].position
+    }
+    matrixRoute(points)
+
+  }
+  function matrixRoute(points) {
+
+
+    if (points != undefined) {
+      dests = points;
+    }
+    else {
+      dests = [markerB.position,];
+    }
+    var markerB = this;
+    var pointA = new google.maps.LatLng(window.travel.lat, window.travel.lng)
+    var service = new google.maps.DistanceMatrixService();
+    DrivingOptions = {
+      departureTime: new Date(Date.now()),  //new Date(Date.now() + N) for the time N milliseconds from now.
+      trafficModel: 'optimistic'
+    }
+    TransitOptions = {}
+    service.getDistanceMatrix(
+      {
+        origins: [pointA,],
+        destinations: dests,
+        travelMode: 'WALKING',
+        transitOptions: TransitOptions,
+        drivingOptions: DrivingOptions,
+        unitSystem: google.maps.UnitSystem.IMPERIAL,
+        avoidHighways: false,
+        avoidTolls: false,
+      }, callback);
+  }
+
+  function callback(response, status) {
+    console.log(response)
+    if (status == 'OK') {
+      var origins = response.originAddresses;
+      var destinations = response.destinationAddresses;
+      makePagination(response.rows[0].elements, results)
+    }
+  }
+
+  function makePagination(times, results) {
+    clearResults()
+    for (var i = 0; i < results.length; i++) {
+      var markerLetter = String.fromCharCode('B'.charCodeAt(0) + (i % 26));
+      var markerIcon = MARKER_PATH + markerLetter + '.png';
+      // Use marker animation to drop the icons incrementally on the map.
+      markers[i] = new google.maps.Marker({
+        position: results[i].geometry.location,
+        animation: google.maps.Animation.DROP,
+        icon: markerIcon
+      });
+      // If the user clicks a hotel marker, show the details of that hotel
+      // in an info window.
+      markers[i].placeResult = results[i];
+      //google.maps.event.addListener(markers[i], 'click', showInfoWindow);
+      //google.maps.event.addListener(markers[i], 'click', showRoute);
+      //google.maps.event.addListener(markers[i], 'click', matrixRoute);
+      setTimeout(dropMarker(i), i * 100);
+      showRoute(markers[i])
+
+      $("#map_info").html("")
+      addResult(results[i], i);
+      $("#map_info").append("<div>Distance : " + times[i].distance.text + "</div>")
+      $("#map_info").append("<div>Travel Time : " + SectoTime(times[0].duration.value * 2) + "</div>")
+      break;
+    }
+  }
+  function SectoTime(secs) {
+    var date = new Date(null);
+    date.setSeconds(secs);
+    return date.toISOString().substr(11, 8);
+  }
+  function showRoute(marker) {
+    if (marker != undefined) {
+      var markerB = marker
+    }
+    else {
+      var markerB = this;
+    }
+    var pointB = markerB.position;
+    directionsService = new google.maps.DirectionsService;
+    directionsDisplay = new google.maps.DirectionsRenderer({
+      map: map
+    })
+    window.pointA = new google.maps.LatLng(window.travel.lat, window.travel.lng)
+    markerA = new google.maps.Marker({
+      position: pointA,
+      title: "point A",
+      label: "A",
+      map: map
+    }),
+      calculateAndDisplayRoute(directionsService, directionsDisplay, pointA, pointB);
+    /*markerB = new google.maps.Marker({
+      position: pointB,
+      title: "point B",
+      label: "B",
+      map: map
+    });
+    */
+
+  }
+  function showInfoWindow() {
+    var marker = this;
+    places.getDetails({ placeId: marker.placeResult.place_id },
+      function (place, status) {
+        if (status !== google.maps.places.PlacesServiceStatus.OK) {
+          return;
+        }
+        infoWindow.open(map, marker);
+        buildIWContent(place);
+      });
+  }
+
+  function buildIWContent(place) {
+    document.getElementById('iw-icon').innerHTML = '<img class="hotelIcon" ' +
+      'src="' + place.icon + '"/>';
+    document.getElementById('iw-url').innerHTML = '<b><a href="' + place.url +
+      '">' + place.name + '</a></b>';
+    document.getElementById('iw-address').textContent = place.vicinity;
+
+    if (place.formatted_phone_number) {
+      document.getElementById('iw-phone-row').style.display = '';
+      document.getElementById('iw-phone').textContent =
+        place.formatted_phone_number;
+    } else {
+      document.getElementById('iw-phone-row').style.display = 'none';
+    }
+
+    // Assign a five-star rating to the hotel, using a black star ('&#10029;')
+    // to indicate the rating the hotel has earned, and a white star ('&#10025;')
+    // for the rating points not achieved.
+    if (place.rating) {
+      var ratingHtml = '';
+      for (var i = 0; i < 5; i++) {
+        if (place.rating < (i + 0.5)) {
+          ratingHtml += '&#10025;';
+        } else {
+          ratingHtml += '&#10029;';
+        }
+        document.getElementById('iw-rating-row').style.display = '';
+        document.getElementById('iw-rating').innerHTML = ratingHtml;
+      }
+    } else {
+      document.getElementById('iw-rating-row').style.display = 'none';
+    }
+
+    // The regexp isolates the first part of the URL (domain plus subdomain)
+    // to give a short URL for displaying in the info window.
+    if (place.website) {
+      var fullUrl = place.website;
+      var website = hostnameRegexp.exec(place.website);
+      if (website === null) {
+        website = 'http://' + place.website + '/';
+        fullUrl = website;
+      }
+      document.getElementById('iw-website-row').style.display = '';
+      document.getElementById('iw-website').textContent = website;
+    } else {
+      document.getElementById('iw-website-row').style.display = 'none';
+    }
+  }
+  function dropMarker(i) {
+    return function () {
+      markers[i].setMap(map);
+    };
+  }
+
+  function addResult(result, i) {
+    var results = document.getElementById('map_info');
+    var markerLetter = String.fromCharCode('B'.charCodeAt(0) + (i % 26));
+    var markerIcon = MARKER_PATH + markerLetter + '.png';
+
+    var li = document.createElement('div');
+    //li.style.backgroundColor = (i % 2 === 0 ? '#F0F0F0' : '#FFFFFF');
+    li.onclick = function () {
+      google.maps.event.trigger(markers[i], 'click');
+    };
+    //var li=document.createElement('li');
+    var iconTd = document.createElement('span');
+    var nameTd = document.createElement('span');
+    var icon = document.createElement('img');
+    icon.src = markerIcon;
+    icon.setAttribute('class', 'placeIcon');
+    icon.setAttribute('className', 'placeIcon');
+    var name = document.createTextNode(result.name);
+    iconTd.appendChild(icon);
+    nameTd.appendChild(name);
+    li.appendChild(iconTd);
+    li.appendChild(nameTd);
+    results.appendChild(li);
+    //$(results).append(li)
+  }
+
+  function clearResults() {
+    var results = document.getElementById('results');
+    while (results.childNodes[0]) {
+      results.removeChild(results.childNodes[0]);
+    }
+  }
+  function calculateAndDisplayRoute(directionsService, directionsDisplay, pointA, pointB) {
+    directionsService.route({
+      origin: pointA,
+      destination: pointB,
+      travelMode: google.maps.TravelMode.DRIVING
+    }, function (response, status) {
+      if (status == google.maps.DirectionsStatus.OK) {
+        directionsDisplay.setDirections(response);
+      } else {
+        window.alert('Directions request failed due to ' + status);
+      }
+    });
+  }
+</script>
+<!-- client said she doesn't need any google-map here
+<script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA3L3Q5rCMHsMgixN6s6x9Y7vaSOHLSoJ4&libraries=places&callback=initMap"
+    defer></script>
+-->
+{%endblock%}

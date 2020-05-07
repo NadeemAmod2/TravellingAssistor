@@ -1,0 +1,47 @@
+{% load static %}
+<html>
+
+<head>
+    <title>
+        Web Survey
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/fontawesome/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/jquery_plugins/timepicker/jquery.timepicker.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/datepicker/bootstrap-datetimepicker.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/g.css' %}">
+    <script type="text/javascript" src="{% static 'vendor/jquery/jquery-3.3.1.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'vendor/jquery_plugins/timepicker/jquery.timepicker.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'vendor/datepicker/moment.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'vendor/datepicker/bootstrap-datetimepicker.js' %}"></script>
+    <script type="text/javascript" src="{% static 'vendor/survey/commons.js' %}"></script>
+</head>
+
+<body>
+
+    {%block content%} {%endblock%}
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light ">
+        <a class="navbar-brand " href="#"></a>
+
+        <div class="float-right" id="navbarNav">
+            <ul class="navbar-nav  col-12">
+                <li class="nav-item">
+                    {%ifequal request.path "/account/login-signup/"%} {%else%} {%if request.user.is_authenticated%}
+                    <a class="nav-link " href="/account/logout/">Log out</a> {%else%}
+                    <a class="nav-link " href="/account/login-signup/">Login</a> {%endif%} {%if request.user.is_superuser%}
+                    <a class="nav-link " href="/account/change-password/">Change Password</a>
+                    <a class="nav-link " href="/survey/export_csv">Export CSV</a> {%endif%} {%endifequal%}
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+</body>
+{%block extrajs%} {%endblock%}
+
+</html>
